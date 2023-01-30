@@ -383,36 +383,38 @@ function Cache:evict(callback, n)
         local exp, key
         exp, key, err = cur:get_first()
         while exp do
-            if tonumber(exp) > t or n >= 0 and nevict > n then
-                break
-            end
+            local deadline = tonumber(exp)
+            if deadline then
+                if deadline > t or n >= 0 and nevict > n then
+                    break
+                end
 
-            local ok, res
-            ok, res, err = pcall(callback, key)
-            if not ok then
-                -- abort
-                err = res
-                break
-            elseif res ~= true then
-                break
-            end
+                local ok, res
+                ok, res, err = pcall(callback, key)
+                if not ok then
+                    -- abort
+                    err = res
+                    break
+                elseif res ~= true then
+                    break
+                end
 
-            -- remove expired key
-            ok, err = kvp:del(key)
-            if not ok and err then
-                break
+                -- remove expired key
+                ok, err = kvp:del(key)
+                if not ok and err then
+                    break
+                end
+                -- delete expiry-key pair index
+                ok, err = cur:del()
+                if not ok and err then
+                    break
+                end
+                ok, err = ekp:del(key)
+                if not ok and err then
+                    break
+                end
+                nevict = nevict + 1
             end
-            -- delete expiry-key pair index
-            ok, err = cur:del()
-            if not ok and err then
-                break
-            end
-            ok, err = ekp:del(key)
-            if not ok and err then
-                break
-            end
-            nevict = nevict + 1
-
             exp, key, err = cur:get_next()
         end
 
