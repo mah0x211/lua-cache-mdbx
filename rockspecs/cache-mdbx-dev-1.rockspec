@@ -14,7 +14,6 @@ dependencies = {
     "cache >= 1.3.0",
     "clock >= 0.1.0",
     "libmdbx >= 0.11.13",
-    "print >= 0.3.0",
 }
 build = {
     type = "builtin",
