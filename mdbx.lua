@@ -22,8 +22,8 @@
 local pcall = pcall
 local tostring = tostring
 local tonumber = tonumber
+local format = string.format
 local gettime = require('clock').gettime
-local format = require('print').format
 local libmdbx = require('libmdbx')
 local new_cache = require('cache').new
 -- constants
